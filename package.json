@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@firebase/app": "^0.4.9",
+    "@material/react-snackbar": "^0.14.1",
     "@primer/octicons-react": "^9.1.1",
     "firebase": "^6.2.4",
     "react": "^16.8.6",

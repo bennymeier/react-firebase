@@ -98,7 +98,7 @@ export default class Kanban extends React.Component {
             const status = area === "1" ? "todo" : (area === "2") ? "inProgress" : "done";
             const doc = kanban.data();
             doc["id"] = docRef.id;
-            this.setState({ [status]: [...this.state[status], doc] }, () => console.log(this.state));
+            this.setState({ [status]: [...this.state[status], doc] });
 
         } catch (err) {
             this.setState({ error: { error: true, errMessage: err, status: 3 } }, () => console.warn(err));
@@ -127,7 +127,7 @@ export default class Kanban extends React.Component {
             this.setState({ error: { error: true, errMessage: err, status: 3 } }, () => console.warn(err));
         }
     }
-    onDragEnd = (result) => {
+    onDragEnd = async (result) => {
         const { source, destination } = result;
         if (!destination) return;
         const id = result.draggableId;
@@ -139,7 +139,7 @@ export default class Kanban extends React.Component {
             const dropId = destination.droppableId;
             let area = dropId === this.areas.todo ? "1" : (dropId === this.areas.inProgress) ? "2" : "3";
             this.updateKanban(id, area);
-            this.move(id, from, to, destination.index);
+            this.move(id, from, to, destination.index, area);
         } else {
             // same list
             const reorder = (list, startIndex, endIndex) => {
@@ -155,18 +155,19 @@ export default class Kanban extends React.Component {
     };
     updateKanban = async (id, area) => {
         try {
-            await KANBAN.doc(id).update({ "currentStatus": area })
+            await KANBAN.doc(id).update({ "currentStatus": area });
         } catch (err) {
             this.setState({ error: { error: true, errMessage: err, status: 3 } }, () => console.warn(err));
         }
     }
-    move = (id, from, to, indexTo) => {
+    move = (id, from, to, indexTo, area) => {
         const currentArea = this.state[from];
         const task = currentArea.filter(task => task.id === id);
+        task[0]["currentStatus"] = area;
         const withoutTask = currentArea.filter(tasks => tasks.id !== id);
         const toArea = this.state[to];
         toArea.splice(indexTo, 0, task[0]);
-        this.setState({ [from]: withoutTask, [to]: toArea }, () => console.log(this.state));
+        this.setState({ [from]: withoutTask, [to]: toArea });
     };
     openKanbanHandler = (id) => {
         this.props.history.push("/kanban/" + id);

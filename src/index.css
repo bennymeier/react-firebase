@@ -156,3 +156,7 @@ input[type="file"] {
   height: 1px;
   margin: 0;
 }
+
+textarea.form-control {
+  min-height: 70px;
+}
